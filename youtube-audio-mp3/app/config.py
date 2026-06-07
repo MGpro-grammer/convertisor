@@ -7,6 +7,7 @@ DOWNLOADS_DIR.mkdir(exist_ok=True)
 YDL_OPTIONS = {
     "format": "bestaudio/best",
     "outtmpl": str(DOWNLOADS_DIR / "%(title)s.%(ext)s"),
+    "noplaylist": True,
     "postprocessors": [
         {
             "key": "FFmpegExtractAudio",
