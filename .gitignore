@@ -1,0 +1,10 @@
+# JetBrains IDEs
+.idea/
+
+# Python virtual environment
+.venv/
+
+# Else
+__pycache__/
+*.pyc
+downloads/
