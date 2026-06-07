@@ -105,7 +105,7 @@ class App(tk.Tk):
 
     def _download_task(self, url: str):
         try:
-            download_audio_as_mp3(url)
+            download_audio_as_mp3(url, self.output_dir)
             self.after(0, self._on_success)
         except Exception as exc:
             self.after(0, self._on_error, str(exc))
