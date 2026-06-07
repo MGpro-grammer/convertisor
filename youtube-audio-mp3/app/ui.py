@@ -1,13 +1,16 @@
 import threading
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
+from pathlib import Path
 from .downloader import download_audio_as_mp3
+from .config import BASE_DIR
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Convertisor")
         self.resizable(False, False)
+        self.output_dir = BASE_DIR / "downloads"
         self._build_ui()
 
     def _build_ui(self):
@@ -34,13 +37,31 @@ class App(tk.Tk):
         )
         self.url_entry.grid(row=2, column=0, columnspan=2, pady=(4, 12))
 
+        # Sélection du dossier de téléchargement
+        ttk.Label(
+            frame,
+            text="Dossier de sortie :"
+        ).grid(row=3, column=0, columnspan=3, sticky="w")
+        self.dir_var = tk.StringVar(value=str(self.output_dir))
+        ttk.Entry(
+            frame,
+            textvariable=self.dir_var,
+            width=36,
+            state="readonly"
+        ).grid(row=4, column=0, columnspan=2, pady=(4, 12), sticky="w")
+        ttk.Button(
+            frame,
+            text="Choose your own folder",
+            command=self._choose_folder
+        ).grid(row=4, column=2, padx=(6, 0), pady=(4, 12))
+
         #Bouton de téléchargement
         self.btn = ttk.Button(
             frame,
             text="Download MP3",
             command=self._start_download
         )
-        self.btn.grid(row=3, column=0, columnspan=2)
+        self.btn.grid(row=5, column=0, columnspan=3, pady=(4, 0))
 
         # Barre de progression
         self.progress = ttk.Progressbar(
@@ -48,14 +69,24 @@ class App(tk.Tk):
             mode="indeterminate",
             length=300
         )
-        self.progress.grid(row=4, column=0, columnspan=2, pady=(12,8))
+        self.progress.grid(row=6, column=0, columnspan=3, pady=(12,8))
 
         #Statut
         self.status_var = tk.StringVar(value="En attente...")
         ttk.Label(
             frame,
             textvariable=self.status_var
-        ).grid(row=5, column=0, columnspan=2)
+        ).grid(row=7, column=0, columnspan=3)
+
+    def _choose_folder(self):
+        folder = filedialog.askdirectory(
+            title="Select Output Folder",
+            initialdir=str(self.output_dir)
+        )
+        if folder:
+            self.output_dir = Path(folder)
+            self.dir_var.set(folder)
+
 
     def _start_download(self):
         url = self.url_var.get().strip()
@@ -83,8 +114,8 @@ class App(tk.Tk):
         self.progress.stop()
         self.btn.config(state="normal")
         self.url_var.set("")
-        self.status_var.set("Download completed successfully! Check the 'Downloads' folder.")
-        messagebox.showinfo("Success", "The MP3 file has been downloaded successfully!")
+        self.status_var.set(f"Download completed successfully! Check {self.output_dir} folder.")
+        messagebox.showinfo("Success", f"The MP3 file has been downloaded successfully! Check the {self.output_dir} folder.")
 
     def _on_error(self, message: str):
         self.progress.stop()

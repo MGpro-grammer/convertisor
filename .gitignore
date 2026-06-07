@@ -4,6 +4,12 @@
 # Python virtual environment
 .venv/
 
+
+# Executable
+build/
+dist/
+*.spec
+
 # Else
 __pycache__/
 *.pyc
