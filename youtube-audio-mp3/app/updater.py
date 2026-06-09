@@ -15,7 +15,7 @@ def get_current_version() -> str:
     if getattr(sys, "frozen", False):
         base = Path(sys.executable).parent
     else:
-        base = Path(__file__).parent
+        base = Path(__file__).resolve().parent.parent
     version_file = base / "version.txt"
     if version_file.exists():
         return version_file.read_text().strip()
