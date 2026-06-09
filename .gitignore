@@ -4,7 +4,6 @@
 # Python virtual environment
 .venv/
 
-
 # Executable
 build/
 dist/
@@ -14,3 +13,5 @@ dist/
 __pycache__/
 *.pyc
 downloads/
+installer/
+convert_icon.py

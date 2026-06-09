@@ -4,6 +4,7 @@ from tkinter import ttk, messagebox, filedialog
 from pathlib import Path
 from .downloader import download_audio_as_mp3
 from .config import BASE_DIR
+from .updater import check_for_update, download_and_install, get_current_version
 
 class App(tk.Tk):
     def __init__(self):
@@ -12,6 +13,7 @@ class App(tk.Tk):
         self.resizable(False, False)
         self.output_dir = BASE_DIR / "downloads"
         self._build_ui()
+        threading.Thread(target=self._check_update_on_start, daemon=True).start()
 
     def _build_ui(self):
         frame = ttk.Frame(self, padding=20)
@@ -78,6 +80,27 @@ class App(tk.Tk):
             textvariable=self.status_var
         ).grid(row=7, column=0, columnspan=3)
 
+        # Séparateur
+        ttk.Separator(
+            frame,
+            orient="horizontal"
+        ).grid(row=8, column=0, columnspan=3, sticky="ew", pady=(16, 8))
+
+        # Version + bouton mise à jour
+        self.version_label = ttk.Label(
+            frame,
+            text=f"Version: {get_current_version()}",
+            foreground="gray"
+        )
+        self.version_label.grid(row=9, column=0, sticky="w")
+
+        self.update_btn = ttk.Button(
+            frame,
+            text="Check for updates",
+            command=self._check_update_manual
+        )
+        self.update_btn.grid(row=9, column=1, columnspan=2, sticky="e")
+
     def _choose_folder(self):
         folder = filedialog.askdirectory(
             title="Select Output Folder",
@@ -122,3 +145,51 @@ class App(tk.Tk):
         self.btn.config(state="normal")
         self.status_var.set("An error occurred during download.")
         messagebox.showerror("Error", f"An error occurred: {message}")
+
+    def _check_update_on_start(self):
+        """Check quietly for updates when the app starts."""
+        update = check_for_update()
+        if update:
+            self.after(0, self._show_update_available, update)
+
+    def _check_update_manual(self):
+        """Manually triggered update check."""
+        self.update_btn.config(state="disabled", text="Checking...")
+        threading.Thread(target=self._check_update_task, daemon=True).start()
+
+    def _check_update_task(self):
+        update = check_for_update()
+        if update:
+            self.after(0, self._show_update_available, update)
+        else:
+            self.after(0, self._show_up_to_date)
+
+    def _show_update_available(self, update: dict):
+        self.update_btn.config(
+            state="normal",
+            text=f"Update Available: {update['version']}",
+            command=lambda: self._install_update(update)
+        )
+
+    def _show_up_to_date(self):
+        self.update_btn.config(state="normal", text="App is up to date")
+        # Remet le bouton normal après 3 secondes
+        self.after(3000, lambda: self.update_btn.config(
+            text="Check for updates",
+            command=self._check_update_manual
+        ))
+
+    def _install_update(self, update: dict):
+        from tkinter import messagebox
+        if messagebox.askyesno(
+            "Update Available",
+            f"Version {update['version']} is available. \n"
+            "Do you want to download and install it now?"
+        ):
+            self.update_btn.config(state="disabled", text="Downloading update...")
+            download_and_install(
+                update["download_url"],
+                on_progress=lambda msg: self.after(0, self.status_var.set, msg),
+                on_done=lambda: self.after(0, self.destroy),
+                on_error=lambda err: self.after(0, messagebox.showerror, "Erreur", err)
+            )
