@@ -1,25 +1,31 @@
-import sys
-import os
+import json
 import subprocess
+import sys
+import tempfile
 import threading
 import urllib.request
-import json
 from pathlib import Path
 
 GITHUB_USER = "MGpro-grammer"
 GITHUB_REPO = "convertisor"
 API_URL = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/releases/latest"
 
+
 def get_current_version() -> str:
     """Reads the current version from the version.txt file."""
     if getattr(sys, "frozen", False):
-        base = Path(sys.executable).parent
+        meipass = Path(getattr(sys, "_MEIPASS", ""))
+        version_file = meipass / "version.txt"
+        if version_file.exists():
+            return version_file.read_text().strip()
+        version_file = Path(sys.executable).parent / "version.txt"
     else:
-        base = Path(__file__).resolve().parent.parent
-    version_file = base / "version.txt"
+        version_file = Path(__file__).resolve().parent.parent / "version.txt"
+
     if version_file.exists():
         return version_file.read_text().strip()
-    return "0.0.0"
+    return "0.0.0"  # Default version if not found
+
 
 def check_for_update() -> dict | None:
     """
@@ -48,19 +54,18 @@ def check_for_update() -> dict | None:
             if download_url:
                 return {"version": latest_version, "download_url": download_url}
 
-    except Exception :
+    except Exception:
         pass  # Silently ignore errors (e.g., network issues)
 
     return None
 
+
 def download_and_install(download_url: str, on_progress, on_done, on_error):
     """Downloads the setup and run in a separate thread."""
+
     def task():
         try:
-            if getattr(sys, "frozen", False):
-                tmp_dir = Path(sys.executable).parent
-            else:
-                tmp_dir = Path(__file__).resolve().parent.parent
+            tmp_dir = Path(tempfile.gettempdir())
 
             installer_path = tmp_dir / "Convertisor-Setup.exe"
             on_progress("Téléchargement en cours...")
