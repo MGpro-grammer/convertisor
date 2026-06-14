@@ -8,6 +8,7 @@ else:
     BASE_DIR = Path(__file__).resolve().parent.parent
 
 FFMPEG_PATH = imageio_ffmpeg.get_ffmpeg_exe()
+SETTINGS_FILE = BASE_DIR / "settings.json"
 
 YDL_BASE_OPTIONS = {
     "format": "bestaudio/best",
