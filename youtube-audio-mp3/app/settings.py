@@ -1,8 +1,10 @@
 import json
 from .config import SETTINGS_FILE
+from .constants import DEFAULT_APPARENCE
 
 DEFAULTS = {
     "confirm_delete": True,  # Confirmation avant suppression
+    "appearance_mode": DEFAULT_APPARENCE,
 }
 
 def load_settings() -> dict:
