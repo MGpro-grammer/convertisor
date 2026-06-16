@@ -1,6 +1,6 @@
 [Setup]
 AppName=Convertisor
-AppVersion=1.0.0
+AppVersion=1.1.1
 AppPublisher=MGpro-grammer
 DefaultDirName={autopf}\Convertisor
 DefaultGroupName=Convertisor
