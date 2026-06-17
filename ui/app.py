@@ -1,8 +1,8 @@
 import threading
 import customtkinter as ctk
 from tkinter import messagebox
-from ..config import BASE_DIR
-from ..constants import (
+from core.config import BASE_DIR
+from core.constants import (
     WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT,
     WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT,
     DEFAULT_COLOR_THEME,
@@ -11,8 +11,8 @@ from ..constants import (
     PAD_OUTER, PAD_TABS, PAD_SECTION,
     UPDATE_BTN_DELAY
 )
-from ..updater import check_for_update, download_and_install, get_current_version
-from ..settings import load_settings
+from core.updater import check_for_update, download_and_install, get_current_version
+from core.settings import load_settings
 from .tab_convert import TabConvert
 from .tab_files import TabFiles
 from .tab_settings import TabSettings

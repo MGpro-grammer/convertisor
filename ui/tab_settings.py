@@ -1,8 +1,8 @@
 import customtkinter as ctk
-from ..constants import (
+from core.constants import (
     FONT_TITLE_SIZE, FONT_BODY_SIZE, PAD_SECTION, PAD_INNER
 )
-from ..settings import save_settings
+from core.settings import save_settings
 
 
 class TabSettings(ctk.CTkFrame):

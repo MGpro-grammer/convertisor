@@ -1,6 +1,6 @@
 import json
-from .config import SETTINGS_FILE
-from .constants import DEFAULT_APPARENCE
+from core.config import SETTINGS_FILE
+from core.constants import DEFAULT_APPARENCE
 
 DEFAULTS = {
     "confirm_delete": True,  # Confirmation avant suppression

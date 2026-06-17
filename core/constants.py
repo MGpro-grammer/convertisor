@@ -6,7 +6,7 @@ WINDOW_MIN_WIDTH = 520
 WINDOW_MIN_HEIGHT = 460
 
 #—— Thème —————————————————————————————————————————————————————————————————————————
-DEFAULT_APPARENCE = "Dark" # "Dark" | "Light" | "System"
+DEFAULT_APPEARANCE = "Dark" # "Dark" | "Light" | "System"
 DEFAULT_COLOR_THEME = "blue" # "blue" | "green" | "dark-blue"
 
 #—— Tailles des éléments UI ———————————————————————————————————————————————————————

@@ -1,4 +1,4 @@
-from .ui import App
+from ui import App
 
 def main():
     app = App()

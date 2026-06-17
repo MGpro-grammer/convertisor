@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from tkinter import messagebox
 from pathlib import Path
-from ..constants import (
+from core.constants import (
     BUTTON_HEIGHT_MD, BUTTON_WIDTH_MD,
     FONT_BODY_SIZE, FONT_SMALL_SIZE, FILE_ROW_HEIGHT, PAD_SECTION, PAD_ITEM
 )

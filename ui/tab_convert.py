@@ -2,8 +2,8 @@ import threading
 import customtkinter as ctk
 from tkinter import messagebox, filedialog
 from pathlib import Path
-from ..downloader import download_audio_as_mp3
-from ..constants import (
+from mp3.downloader import download_audio_as_mp3
+from core.constants import (
     ENTRY_HEIGHT, BUTTON_HEIGHT_LG, BUTTON_WIDTH_SM,
     FONT_TITLE_SIZE, FONT_BODY_SIZE, FONT_SMALL_SIZE,
     PAD_ITEM, PAD_SECTION, PROGRESS_HEIGHT, SUCCESS_RESET_DELAY
