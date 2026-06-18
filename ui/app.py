@@ -1,7 +1,7 @@
 import threading
 import customtkinter as ctk
 from tkinter import messagebox
-from core.config import BASE_DIR
+from core.config import DOWNLOADS_MP3, DOWNLOADS_MP4
 from core.constants import (
     WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT,
     WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT,
@@ -16,6 +16,7 @@ from core.settings import load_settings
 from .tab_convert import TabConvert
 from .tab_files import TabFiles
 from .tab_settings import TabSettings
+from .tab_video import TabVideo
 
 ctk.set_default_color_theme(DEFAULT_COLOR_THEME)
 
@@ -24,6 +25,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.settings = load_settings()
+        self.output_dir = DOWNLOADS_MP3
 
         # Applique le thème sauvegardé
         ctk.set_appearance_mode(
@@ -35,7 +37,6 @@ class App(ctk.CTk):
         self.minsize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
         self.resizable(True, True)
 
-        self.output_dir = BASE_DIR / "downloads"
         self._center_window()
         self._build_ui()
 
@@ -59,11 +60,12 @@ class App(ctk.CTk):
             row=0, column=0,
             padx=PAD_TABS, pady=(PAD_SECTION, 0), sticky="nsew"
         )
-        self.tabs.add("🎵  Convertir")
+        self.tabs.add("🎵  Convertir MP3")
+        self.tabs.add("📽️  Convertir MP4")
         self.tabs.add("🗑  Fichiers")
         self.tabs.add("⚙  Paramètres")
 
-        for tab_name in ["🎵  Convertir", "🗑  Fichiers", "⚙  Paramètres"]:
+        for tab_name in ["🎵  Convertir MP3", "📽️  Convertir MP4", "🗑  Fichiers", "⚙  Paramètres"]:
             self.tabs.tab(tab_name).grid_columnconfigure(0, weight=1)
             self.tabs.tab(tab_name).grid_rowconfigure(0, weight=1)
 
@@ -72,16 +74,21 @@ class App(ctk.CTk):
 
         # Instanciation des onglets
         self.tab_convert = TabConvert(
-            self.tabs.tab("🎵  Convertir"),
-            self.output_dir,
+            self.tabs.tab("🎵  Convertir MP3"),
             self.status_var
         )
         self.tab_convert.grid(row=0, column=0, sticky="nsew")
         self.tab_convert.on_download_success = self._on_download_success
 
+        self.tab_video = TabVideo(
+            self.tabs.tab("📽️  Convertir MP4"),
+            self.status_var
+        )
+        self.tab_video.grid(row=0, column=0, sticky="nsew")
+        self.tab_video.on_download_success = self._on_download_success
+
         self.tab_files = TabFiles(
             self.tabs.tab("🗑  Fichiers"),
-            self.output_dir,
             self.settings
         )
         self.tab_files.grid(row=0, column=0, sticky="nsew")

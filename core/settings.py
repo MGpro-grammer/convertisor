@@ -1,10 +1,10 @@
 import json
 from core.config import SETTINGS_FILE
-from core.constants import DEFAULT_APPARENCE
+from core.constants import DEFAULT_APPEARANCE
 
 DEFAULTS = {
     "confirm_delete": True,  # Confirmation avant suppression
-    "appearance_mode": DEFAULT_APPARENCE,
+    "appearance_mode": DEFAULT_APPEARANCE,
 }
 
 def load_settings() -> dict:

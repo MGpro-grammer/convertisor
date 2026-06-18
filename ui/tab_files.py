@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from tkinter import messagebox
 from pathlib import Path
+from core.config import DOWNLOADS_MP3, DOWNLOADS_MP4
 from core.constants import (
     BUTTON_HEIGHT_MD, BUTTON_WIDTH_MD,
     FONT_BODY_SIZE, FONT_SMALL_SIZE, FILE_ROW_HEIGHT, PAD_SECTION, PAD_ITEM
@@ -8,9 +9,9 @@ from core.constants import (
 
 
 class TabFiles(ctk.CTkFrame):
-    def __init__(self, parent, output_dir: Path, settings: dict):
+    def __init__(self, parent, settings: dict):
         super().__init__(parent, fg_color="transparent")
-        self.output_dir = output_dir
+        self.output_dir = DOWNLOADS_MP3
         self.settings = settings
         self._selected_file = None
         self._file_buttons = []
@@ -35,7 +36,7 @@ class TabFiles(ctk.CTkFrame):
 
         ctk.CTkLabel(
             toolbar,
-            text="Fichiers MP3 téléchargés",
+            text="Fichiers téléchargés",
             font=ctk.CTkFont(size=FONT_BODY_SIZE, weight="bold")
         ).grid(row=0, column=1, sticky="w")
 
@@ -61,29 +62,31 @@ class TabFiles(ctk.CTkFrame):
         self.refresh()
 
     def refresh(self):
-        """Recharge la liste des fichiers MP3."""
+        """Recharge la liste des fichiers MP3 et MP4."""
         for widget in self.file_listbox.winfo_children():
             widget.destroy()
         self._file_buttons = []
         self._selected_file = None
         self.delete_btn.configure(state="disabled")
 
-        mp3_files = sorted(self.output_dir.glob("*.mp3")) \
-            if self.output_dir.exists() else []
+        mp3_files = sorted(DOWNLOADS_MP3.glob("*.mp3")) if DOWNLOADS_MP3.exists() else []
+        mp4_files = sorted(DOWNLOADS_MP4.glob("*.mp4")) if DOWNLOADS_MP4.exists() else []
+        all_files = mp3_files + mp4_files
 
-        if not mp3_files:
+        if not all_files:
             ctk.CTkLabel(
                 self.file_listbox,
-                text="Aucun fichier MP3 trouvé.",
+                text="Aucun fichier trouvé.",
                 text_color="gray",
                 font=ctk.CTkFont(size=FONT_SMALL_SIZE)
             ).grid(row=0, column=0, pady=20)
             return
 
-        for i, f in enumerate(mp3_files):
+        for i, f in enumerate(all_files):
+            icon = "🎵" if f.suffix == ".mp3" else "🎬"
             btn = ctk.CTkButton(
                 self.file_listbox,
-                text=f"🎵  {f.name}",
+                text=f"{icon}  {f.name}",
                 font=ctk.CTkFont(size=FONT_SMALL_SIZE),
                 anchor="w",
                 height=FILE_ROW_HEIGHT,

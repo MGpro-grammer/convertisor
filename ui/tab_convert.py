@@ -3,6 +3,7 @@ import customtkinter as ctk
 from tkinter import messagebox, filedialog
 from pathlib import Path
 from mp3.downloader import download_audio_as_mp3
+from core.config import DOWNLOADS_MP3
 from core.constants import (
     ENTRY_HEIGHT, BUTTON_HEIGHT_LG, BUTTON_WIDTH_SM,
     FONT_TITLE_SIZE, FONT_BODY_SIZE, FONT_SMALL_SIZE,
@@ -11,9 +12,9 @@ from core.constants import (
 
 
 class TabConvert(ctk.CTkFrame):
-    def __init__(self, parent, output_dir: Path, status_var: ctk.StringVar):
+    def __init__(self, parent, status_var: ctk.StringVar):
         super().__init__(parent, fg_color="transparent")
-        self.output_dir = output_dir
+        self.output_dir = DOWNLOADS_MP3
         self.status_var = status_var
         self.grid_columnconfigure(0, weight=1)
         self._build()
