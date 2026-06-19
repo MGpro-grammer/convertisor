@@ -1,4 +1,5 @@
 import json
+
 from core.config import SETTINGS_FILE
 from core.constants import DEFAULT_APPEARANCE
 

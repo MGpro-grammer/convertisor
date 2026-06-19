@@ -1,4 +1,5 @@
 import customtkinter as ctk
+
 from core.constants import (
     FONT_TITLE_SIZE, FONT_BODY_SIZE, PAD_SECTION, PAD_INNER
 )

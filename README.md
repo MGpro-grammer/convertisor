@@ -4,7 +4,7 @@
 
 ## Description
 
-Projet dans lequel nous convertissons une vidéo sur le net (via une URL) en un fichier .mp3 (pour le moment).
+Projet dans lequel nous convertissons une vidéo YouTube (via une URL) en fichier **.mp3** ou **.mp4**.
 
 ---
 

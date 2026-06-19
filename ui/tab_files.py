@@ -1,6 +1,8 @@
-import customtkinter as ctk
-from tkinter import messagebox
 from pathlib import Path
+from tkinter import messagebox
+
+import customtkinter as ctk
+
 from core.config import DOWNLOADS_MP3, DOWNLOADS_MP4
 from core.constants import (
     BUTTON_HEIGHT_MD, BUTTON_WIDTH_MD,

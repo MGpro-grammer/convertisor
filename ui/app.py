@@ -1,7 +1,8 @@
 import threading
-import customtkinter as ctk
 from tkinter import messagebox
-from core.config import DOWNLOADS_MP3, DOWNLOADS_MP4
+
+import customtkinter as ctk
+
 from core.constants import (
     WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT,
     WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT,
@@ -11,8 +12,8 @@ from core.constants import (
     PAD_OUTER, PAD_TABS, PAD_SECTION,
     UPDATE_BTN_DELAY
 )
-from core.updater import check_for_update, download_and_install, get_current_version
 from core.settings import load_settings
+from core.updater import check_for_update, download_and_install, get_current_version
 from .tab_convert import TabConvert
 from .tab_files import TabFiles
 from .tab_settings import TabSettings
@@ -25,7 +26,6 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.settings = load_settings()
-        self.output_dir = DOWNLOADS_MP3
 
         # Applique le thème sauvegardé
         ctk.set_appearance_mode(
