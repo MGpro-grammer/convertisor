@@ -27,4 +27,4 @@ Name: "{group}\Convertisor"; Filename: "{app}\Convertisor.exe"; IconFilename: "{
 Name: "{commondesktop}\Convertisor"; Filename: "{app}\Convertisor.exe"; IconFilename: "{app}\icon.ico"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\Convertisor.exe"; Description: "Lancer Convertisor"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\Convertisor.exe"; Description: "Lancer Convertisor"; Flags: postinstall skipifsilent shellexec
