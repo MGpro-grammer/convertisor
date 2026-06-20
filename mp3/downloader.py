@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import imageio_ffmpeg
@@ -6,7 +5,7 @@ from yt_dlp import YoutubeDL
 
 
 def _get_ffmepg_path() -> str:
-    return os.path.dirname(imageio_ffmpeg.get_ffmpeg_exe())
+    return imageio_ffmpeg.get_ffmpeg_exe()
 
 
 def download_audio_as_mp3(url: str, output_dir: Path) -> None:
