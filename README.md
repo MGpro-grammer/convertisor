@@ -24,7 +24,7 @@ Mouratidis Georges - [Profil LinkedIn](https://www.linkedin.com/in/georges-moura
 
 Vous pouvez télécharger l'application qui est publiée sur ce même dépôt.
 
-La dernière version à ce jour de l'application est la **1.1.1**
+La dernière version à ce jour de l'application est la **2.0.1**
 
 ---
 
