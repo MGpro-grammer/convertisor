@@ -7,7 +7,6 @@
 # Executable
 build/
 dist/
-*.spec
 
 # Else
 __pycache__/
@@ -15,3 +14,4 @@ __pycache__/
 downloads/
 installer/
 convert_icon.py
+settings.json

@@ -1,3 +1,12 @@
+"""
+Lecture et écriture des préférences utilisateur.
+
+Les préférences sont stockées en JSON dans un fichier dont
+l'emplacement dépend du mode d'exécution (voir
+``core.config.SETTINGS_FILE``). Un fichier absent ou illisible n'est
+jamais une erreur : les valeurs par défaut prennent alors le relais.
+"""
+
 import json
 
 from core.config import SETTINGS_FILE
@@ -22,5 +31,6 @@ def load_settings() -> dict:
 
 def save_settings(settings: dict) -> None:
     """Sauvegarde les paramètres dans settings.json."""
+    SETTINGS_FILE.parent.mkdir(parents=True, exist_ok=True)
     with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
         json.dump(settings, f, indent=2, ensure_ascii=False)

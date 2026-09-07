@@ -1,14 +1,26 @@
+"""
+Téléchargement de la piste audio d'une vidéo YouTube au format MP3.
+"""
+
 from pathlib import Path
 
-import imageio_ffmpeg
 from yt_dlp import YoutubeDL
 
-
-def _get_ffmepg_path() -> str:
-    return imageio_ffmpeg.get_ffmpeg_exe()
+from core.ffmpeg import get_ffmpeg_path
 
 
 def download_audio_as_mp3(url: str, output_dir: Path) -> None:
+    """
+    Télécharge l'audio d'une vidéo YouTube et l'encode en MP3 192 kbit/s.
+
+    Le nom du fichier produit est le titre de la vidéo. Un fichier
+    portant déjà ce nom est écrasé par yt-dlp.
+
+    :param url: URL de la vidéo YouTube.
+    :param output_dir: Dossier de destination, créé s'il n'existe pas.
+    :raises yt_dlp.utils.DownloadError: URL invalide, vidéo
+        indisponible, ou absence de connexion réseau.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     options = {
         "format": "bestaudio/best",
@@ -19,7 +31,7 @@ def download_audio_as_mp3(url: str, output_dir: Path) -> None:
             "preferredquality": "192",
         }],
         "noplaylist": True,
-        "ffmpeg_location": _get_ffmepg_path(),
+        "ffmpeg_location": get_ffmpeg_path(),
     }
     with YoutubeDL(options) as ydl:
         ydl.download([url])

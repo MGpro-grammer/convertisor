@@ -1,6 +1,13 @@
+; Lecture de la version depuis version.txt : source unique de verite,
+; partagee avec l'application (voir core/config.py -> VERSION_FILE).
+#define VersionFile FileOpen(AddBackslash(SourcePath) + "version.txt")
+#define AppVer FileRead(VersionFile)
+#expr FileClose(VersionFile)
+#undef VersionFile
+
 [Setup]
 AppName=Convertisor
-AppVersion=2.0.0
+AppVersion={#AppVer}
 AppPublisher=MGpro-grammer
 DefaultDirName={autopf}\Convertisor
 DefaultGroupName=Convertisor
