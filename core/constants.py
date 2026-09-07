@@ -1,3 +1,11 @@
+"""
+Constantes d'interface : dimensions, polices, espacements, délais.
+
+Centraliser ces valeurs garantit la cohérence visuelle entre les
+onglets et permet d'ajuster l'apparence sans toucher au code des
+composants.
+"""
+
 #—— Fenêtre ———————————————————————————————————————————————————————————————————————
 WINDOW_TITLE = "Convertisor"
 WINDOW_WIDTH = 600
@@ -35,4 +43,4 @@ PAD_TABS = 16 # Marges des onglets
 
 #—— Divers —————————————————————————————————————————————————————————————————————————
 SUCCESS_RESET_DELAY = 3000 # ms avant reset barre de progression
-UPDATE_BTN_DELAY = 3000 # ms avant rest bouton "à jour"
+UPDATE_BTN_DELAY = 3000 # ms avant reset bouton "à jour"

@@ -1,3 +1,11 @@
+"""
+Fenêtre principale de l'application Convertisor.
+
+Assemble les onglets dans un ``CTkTabview``, partage entre eux une
+variable de statut, et gère la recherche de mises à jour affichée dans
+la barre du bas.
+"""
+
 import threading
 from tkinter import messagebox
 
@@ -23,7 +31,16 @@ ctk.set_default_color_theme(DEFAULT_COLOR_THEME)
 
 
 class App(ctk.CTk):
+    """
+    Fenêtre principale de l'application.
+
+    Charge les préférences utilisateur, construit l'interface, puis
+    lance en arrière-plan une vérification des mises à jour afin de ne
+    pas retarder l'affichage de la fenêtre.
+    """
+
     def __init__(self):
+        """Initialise la fenêtre, applique le thème et construit l'interface."""
         super().__init__()
         self.settings = load_settings()
 
@@ -45,12 +62,20 @@ class App(ctk.CTk):
         ).start()
 
     def _center_window(self):
+        """Positionne la fenêtre au centre de l'écran principal."""
         self.update_idletasks()
         x = (self.winfo_screenwidth() // 2) - (WINDOW_WIDTH // 2)
         y = (self.winfo_screenheight() // 2) - (WINDOW_HEIGHT // 2)
         self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{x}+{y}")
 
     def _build_ui(self):
+        """
+        Construit les onglets et la barre du bas.
+
+        La variable ``status_var`` est partagée entre les onglets de
+        téléchargement : chacun y écrit son avancement, ce qui évite
+        de dupliquer un libellé de statut par onglet.
+        """
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
@@ -138,17 +163,25 @@ class App(ctk.CTk):
     # ================================================================== #
 
     def _check_update_on_start(self):
+        """
+        Vérifie les mises à jour au démarrage, sans bloquer l'affichage.
+
+        Exécutée dans un thread : le résultat est remis sur le thread
+        graphique via ``after``, seul autorisé à toucher aux widgets.
+        """
         update = check_for_update()
         if update:
             self.after(0, self._show_update_available, update)
 
     def _check_update_manual(self):
+        """Lance une vérification déclenchée par le bouton de la barre du bas."""
         self.update_btn.configure(state="disabled", text="Vérification...")
         threading.Thread(
             target=self._check_update_task, daemon=True
         ).start()
 
     def _check_update_task(self):
+        """Effectue la vérification manuelle et met à jour le bouton."""
         update = check_for_update()
         if update:
             self.after(0, self._show_update_available, update)
@@ -156,6 +189,12 @@ class App(ctk.CTk):
             self.after(0, self._show_up_to_date)
 
     def _show_update_available(self, update: dict):
+        """
+        Transforme le bouton en invitation à installer la mise à jour.
+
+        :param update: Dictionnaire renvoyé par
+            :func:`core.updater.check_for_update`.
+        """
         self.update_btn.configure(
             state="normal",
             text=f"⬆ Mise à jour v{update['version']} disponible !",
@@ -165,6 +204,7 @@ class App(ctk.CTk):
         )
 
     def _show_up_to_date(self):
+        """Confirme que l'application est à jour, puis restaure le bouton."""
         self.update_btn.configure(state="normal", text="Application à jour")
         self.after(UPDATE_BTN_DELAY, lambda: self.update_btn.configure(
             text="Rechercher les mises à jour",
@@ -172,6 +212,15 @@ class App(ctk.CTk):
         ))
 
     def _install_update(self, update: dict):
+        """
+        Demande confirmation, puis télécharge et lance l'installateur.
+
+        L'application se ferme une fois l'installateur démarré : il ne
+        peut pas remplacer un exécutable en cours d'exécution.
+
+        :param update: Dictionnaire renvoyé par
+            :func:`core.updater.check_for_update`.
+        """
         if messagebox.askyesno(
             "Mise à jour disponible",
             f"Version {update['version']} disponible.\n"

@@ -1,3 +1,7 @@
+"""
+Onglet « Paramètres » : thème de l'application et confirmation de suppression.
+"""
+
 import customtkinter as ctk
 
 from core.constants import (
@@ -7,7 +11,20 @@ from core.settings import save_settings
 
 
 class TabSettings(ctk.CTkFrame):
+    """
+    Réglages de l'application.
+
+    Chaque modification est enregistrée immédiatement dans
+    settings.json : il n'y a pas de bouton « Valider ».
+    """
+
     def __init__(self, parent, settings: dict, on_appearance_change):
+        """
+        :param parent: Conteneur parent, typiquement un onglet du CTkTabview.
+        :param settings: Préférences utilisateur, modifiées en place.
+        :param on_appearance_change: Callback optionnel appelé avec le
+            nouveau mode d'apparence, ou ``None``.
+        """
         super().__init__(parent, fg_color="transparent")
         self.settings = settings
         self.on_appearance_change = on_appearance_change
@@ -15,6 +32,7 @@ class TabSettings(ctk.CTkFrame):
         self._build()
 
     def _build(self):
+        """Assemble les sections Apparence et Suppressions."""
         ctk.CTkLabel(
             self,
             text="⚙ Paramètres",
@@ -80,6 +98,11 @@ class TabSettings(ctk.CTkFrame):
         ).grid(row=0, column=1, padx=PAD_INNER, pady=PAD_INNER)
 
     def _on_appearance_change(self, value: str):
+        """
+        Applique et enregistre le nouveau thème.
+
+        :param value: « Light », « Dark » ou « System ».
+        """
         ctk.set_appearance_mode(value)
         self.settings["appearance_mode"] = value
         save_settings(self.settings)
@@ -87,5 +110,6 @@ class TabSettings(ctk.CTkFrame):
             self.on_appearance_change(value)
 
     def _save(self):
+        """Enregistre la préférence de confirmation avant suppression."""
         self.settings["confirm_delete"] = self.confirm_var.get()
         save_settings(self.settings)

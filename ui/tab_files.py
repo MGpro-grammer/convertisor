@@ -1,3 +1,7 @@
+"""
+Onglet « Fichiers » : liste et suppression des fichiers téléchargés.
+"""
+
 from pathlib import Path
 from tkinter import messagebox
 
@@ -11,9 +15,29 @@ from core.constants import (
 
 
 class TabFiles(ctk.CTkFrame):
+    """
+    Liste les fichiers produits par l'application et permet de les supprimer.
+
+    La liste est reconstruite à chaque appel de :meth:`refresh`, appelé
+    à l'ouverture et après chaque téléchargement réussi.
+    """
+
+    #: Extensions listées, associées à l'icône affichée devant le nom.
+    FILE_ICONS = {
+        ".mp3": "🎵",
+        ".mp4": "🎬",
+    }
+
+    #: Dossiers parcourus. Les doublons sont éliminés au parcours,
+    #: plusieurs formats pouvant partager un même dossier de sortie.
+    SEARCH_DIRS = (DOWNLOADS_MP3, DOWNLOADS_MP4)
+
     def __init__(self, parent, settings: dict):
+        """
+        :param parent: Conteneur parent, typiquement un onglet du CTkTabview.
+        :param settings: Préférences utilisateur, lues pour ``confirm_delete``.
+        """
         super().__init__(parent, fg_color="transparent")
-        self.output_dir = DOWNLOADS_MP3
         self.settings = settings
         self._selected_file = None
         self._file_buttons = []
@@ -22,6 +46,7 @@ class TabFiles(ctk.CTkFrame):
         self._build()
 
     def _build(self):
+        """Assemble la barre d'outils et la zone de liste défilante."""
         # Barre d'outils
         toolbar = ctk.CTkFrame(self, fg_color="transparent")
         toolbar.grid(row=0, column=0, pady=(PAD_SECTION, PAD_SECTION), sticky="ew")
@@ -63,17 +88,33 @@ class TabFiles(ctk.CTkFrame):
 
         self.refresh()
 
+    def _collect_files(self) -> list[Path]:
+        """
+        Rassemble les fichiers présents dans les dossiers surveillés.
+
+        Les fichiers sont groupés par extension, dans l'ordre de
+        :attr:`FILE_ICONS`, et triés par nom à l'intérieur de chaque groupe.
+
+        :return: Liste des fichiers trouvés, éventuellement vide.
+        """
+        files: list[Path] = []
+        # dict.fromkeys conserve l'ordre tout en supprimant les doublons.
+        directories = list(dict.fromkeys(self.SEARCH_DIRS))
+        for suffix in self.FILE_ICONS:
+            for directory in directories:
+                if directory.exists():
+                    files.extend(sorted(directory.glob(f"*{suffix}")))
+        return files
+
     def refresh(self):
-        """Recharge la liste des fichiers MP3 et MP4."""
+        """Reconstruit entièrement la liste et annule la sélection en cours."""
         for widget in self.file_listbox.winfo_children():
             widget.destroy()
         self._file_buttons = []
         self._selected_file = None
         self.delete_btn.configure(state="disabled")
 
-        mp3_files = sorted(DOWNLOADS_MP3.glob("*.mp3")) if DOWNLOADS_MP3.exists() else []
-        mp4_files = sorted(DOWNLOADS_MP4.glob("*.mp4")) if DOWNLOADS_MP4.exists() else []
-        all_files = mp3_files + mp4_files
+        all_files = self._collect_files()
 
         if not all_files:
             ctk.CTkLabel(
@@ -85,7 +126,7 @@ class TabFiles(ctk.CTkFrame):
             return
 
         for i, f in enumerate(all_files):
-            icon = "🎵" if f.suffix == ".mp3" else "🎬"
+            icon = self.FILE_ICONS.get(f.suffix, "📄")
             btn = ctk.CTkButton(
                 self.file_listbox,
                 text=f"{icon}  {f.name}",
@@ -101,6 +142,11 @@ class TabFiles(ctk.CTkFrame):
             self._file_buttons.append((btn, f))
 
     def _select_file(self, file: Path):
+        """
+        Sélectionne un fichier et active le bouton de suppression.
+
+        :param file: Fichier correspondant au bouton cliqué.
+        """
         self._selected_file = file
         self.delete_btn.configure(state="normal")
         for btn, f in self._file_buttons:
@@ -109,6 +155,13 @@ class TabFiles(ctk.CTkFrame):
             )
 
     def _delete_selected(self):
+        """
+        Supprime le fichier sélectionné, après confirmation si demandée.
+
+        La confirmation dépend de la préférence ``confirm_delete``. La
+        suppression est définitive : le fichier ne passe pas par la
+        corbeille.
+        """
         if not self._selected_file:
             return
         if self.settings.get("confirm_delete", True):
