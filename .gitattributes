@@ -1,0 +1,23 @@
+# Normalisation des fins de ligne
+# Le depot stocke tout en LF. Evite les diffs fantomes entre
+# Windows (CRLF) et le depot distant.
+
+* text=auto eol=lf
+
+# Fichiers texte du projet
+*.py    text eol=lf
+*.md    text eol=lf
+*.txt   text eol=lf
+*.json  text eol=lf
+*.spec  text eol=lf
+
+# Inno Setup : compilateur Windows uniquement, on conserve CRLF
+*.iss   text eol=crlf
+
+# Fichiers binaires : jamais convertis
+*.ico   binary
+*.png   binary
+*.exe   binary
+*.mp3   binary
+*.mp4   binary
+*.gif   binary
