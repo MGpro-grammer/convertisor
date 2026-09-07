@@ -6,7 +6,7 @@ from pathlib import Path
 
 from yt_dlp import YoutubeDL
 
-from core.ffmpeg import get_ffmpeg_path
+from core.ytdlp import base_options
 
 
 def download_video_as_mp4(url: str, output_dir: Path) -> None:
@@ -23,11 +23,10 @@ def download_video_as_mp4(url: str, output_dir: Path) -> None:
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     options = {
+        **base_options(),
         "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
         "outtmpl": str(output_dir / "%(title)s.%(ext)s"),
         "merge_output_format": "mp4",
-        "noplaylist": True,
-        "ffmpeg_location": get_ffmpeg_path(),
     }
     with YoutubeDL(options) as ydl:
         ydl.download([url])

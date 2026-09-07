@@ -26,7 +26,7 @@ Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 Name: "desktopicon"; Description: "Créer une icône sur le bureau"; GroupDescription: "Icônes supplémentaires"
 
 [Files]
-Source: "dist\Convertisor.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\Convertisor\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "assets\icon.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]

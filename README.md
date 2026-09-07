@@ -32,7 +32,8 @@ Téléchargez `Convertisor-Setup.exe` depuis la
 et lancez-le. L'application s'installe avec un raccourci dans le menu
 Démarrer, et sur le Bureau si vous cochez l'option correspondante.
 
-Aucune dépendance n'est à installer : FFmpeg est inclus dans l'exécutable.
+Aucune dépendance n'est à installer : FFmpeg et le moteur JavaScript
+nécessaire aux téléchargements sont inclus.
 
 L'application vérifie au démarrage si une version plus récente est publiée,
 et propose de l'installer le cas échéant.
@@ -61,6 +62,15 @@ En mode développement, les deux se trouvent à la racine du projet
 
 - Python 3.12
 - Windows
+- [Deno](https://deno.com/) 2.3 ou supérieur
+
+Deno est indispensable. YouTube exige la résolution d'un défi JavaScript
+pour servir une partie de ses vidéos ; sans moteur pour l'exécuter, les
+téléchargements échouent avec une erreur `HTTP 403 Forbidden`.
+
+```powershell
+winget install DenoLand.Deno
+```
 
 ### Mise en place
 
@@ -78,6 +88,10 @@ pip install -r requirements.txt
 python main.py
 ```
 
+En développement, l'application utilise le Deno présent dans le `PATH`.
+Pour compiler l'exécutable, il faut en revanche en placer une copie dans le
+projet — voir la section Construction.
+
 ---
 
 ## Structure du projet
@@ -90,7 +104,10 @@ convertisor/
 │   ├── constants.py         # Dimensions, polices, espacements de l'interface
 │   ├── ffmpeg.py            # Accès au binaire FFmpeg embarqué
 │   ├── settings.py          # Lecture et écriture des préférences
-│   └── updater.py           # Vérification et installation des mises à jour
+│   ├── timecode.py          # Conversion entre secondes et « mm:ss »
+│   ├── updater.py           # Vérification et installation des mises à jour
+│   ├── youtube.py           # Métadonnées d'une vidéo, sans téléchargement
+│   └── ytdlp.py             # Options communes à tous les téléchargements
 ├── gif/                     # Découpage et conversion en GIF (en développement)
 ├── mp3/                     # Téléchargement au format MP3
 ├── mp4/                     # Téléchargement au format MP4
@@ -103,6 +120,7 @@ convertisor/
 │   ├── tab_gif.py           # Onglet GIF (en développement)
 │   ├── tab_files.py         # Onglet Fichiers
 │   └── tab_settings.py      # Onglet Paramètres
+├── vendor/                  # Binaires embarqués, non versionnés (voir Construction)
 ├── convert_icon.py          # Utilitaire : génère icon.ico à partir de icon.png
 ├── Convertisor.spec         # Configuration PyInstaller
 ├── installer.iss            # Configuration Inno Setup
@@ -116,6 +134,10 @@ logique commune : champ d'URL, sélecteur de dossier, téléchargement en
 arrière-plan, barre de progression et gestion des erreurs. Ajouter un format
 revient à définir quelques attributs de classe et une méthode `download`.
 
+`core/ytdlp.py` centralise la configuration passée à yt-dlp — emplacement de
+FFmpeg, emplacement de Deno, autorisation du solveur externe. Tout module
+qui télécharge doit partir de `base_options()`.
+
 ---
 
 ## Construction
@@ -124,17 +146,36 @@ Le numéro de version est lu depuis `version.txt`, aussi bien par
 l'application que par l'installateur. C'est le seul endroit à modifier avant
 une nouvelle release.
 
-**Exécutable** :
+### Binaires embarqués
+
+`vendor/` n'est pas versionné : un exécutable de 93 Mo resterait
+définitivement dans l'historique du dépôt. Il faut donc l'alimenter avant la
+première compilation :
+
+```powershell
+mkdir vendor
+Copy-Item (Get-Command deno).Source .\vendor\deno.exe
+```
+
+FFmpeg, lui, provient du paquet `imageio-ffmpeg` et est embarqué
+automatiquement.
+
+### Exécutable
 
 ```powershell
 pyinstaller Convertisor.spec
 ```
 
-Produit `dist\Convertisor.exe`.
+Produit le dossier `dist\Convertisor\`, d'environ 220 Mo.
 
-**Installateur** : ouvrez `installer.iss` dans
-[Inno Setup](https://jrsoftware.org/isinfo.php) et lancez la compilation.
-Produit `installer\Convertisor-Setup.exe`.
+Le mode **onedir** est délibéré : avec 180 Mo de binaires, un exécutable
+unique devrait tout décompresser à chaque lancement, imposant plusieurs
+secondes d'attente à chaque ouverture.
+
+### Installateur
+
+Ouvrez `installer.iss` dans [Inno Setup](https://jrsoftware.org/isinfo.php)
+et lancez la compilation. Produit `installer\Convertisor-Setup.exe`.
 
 ---
 
@@ -146,6 +187,7 @@ Produit `installer\Convertisor-Setup.exe`.
 | [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter) | Interface graphique | MIT |
 | [imageio-ffmpeg](https://github.com/imageio/imageio-ffmpeg) | Fourniture du binaire FFmpeg | BSD-2-Clause |
 | [FFmpeg](https://ffmpeg.org/) | Conversion audio et vidéo | GPL v3 |
+| [Deno](https://deno.com/) | Moteur JavaScript pour les défis YouTube | MIT |
 | [Pillow](https://github.com/python-pillow/Pillow) | Génération de l'icône | MIT-CMU |
 | [PyInstaller](https://pyinstaller.org/) | Création de l'exécutable | GPL v2 avec exception |
 
@@ -153,6 +195,11 @@ Le binaire FFmpeg redistribué est le build `essentials` de
 [gyan.dev](https://www.gyan.dev/ffmpeg/builds/), compilé avec `--enable-gpl`
 et `--enable-version3`, et donc placé sous **GPL v3**. Ses sources sont
 disponibles auprès du [projet FFmpeg](https://ffmpeg.org/download.html).
+
+L'application autorise par ailleurs yt-dlp à télécharger, au besoin, le
+solveur de défis JavaScript publié dans le dépôt
+[yt-dlp/ejs](https://github.com/yt-dlp/ejs). Ce code est récupéré depuis le
+dépôt officiel de yt-dlp et exécuté dans le bac à sable de Deno.
 
 ---
 

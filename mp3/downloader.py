@@ -6,7 +6,7 @@ from pathlib import Path
 
 from yt_dlp import YoutubeDL
 
-from core.ffmpeg import get_ffmpeg_path
+from core.ytdlp import base_options
 
 
 def download_audio_as_mp3(url: str, output_dir: Path) -> None:
@@ -23,6 +23,7 @@ def download_audio_as_mp3(url: str, output_dir: Path) -> None:
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     options = {
+        **base_options(),
         "format": "bestaudio/best",
         "outtmpl": str(output_dir / "%(title)s.%(ext)s"),
         "postprocessors": [{
@@ -30,8 +31,6 @@ def download_audio_as_mp3(url: str, output_dir: Path) -> None:
             "preferredcodec": "mp3",
             "preferredquality": "192",
         }],
-        "noplaylist": True,
-        "ffmpeg_location": get_ffmpeg_path(),
     }
     with YoutubeDL(options) as ydl:
         ydl.download([url])
