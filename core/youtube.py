@@ -7,6 +7,7 @@ sert pour valider la plage saisie avant de lancer quoi que ce soit.
 """
 
 from dataclasses import dataclass
+import urllib.request
 
 from yt_dlp import YoutubeDL
 
@@ -58,3 +59,19 @@ def fetch_video_info(url: str) -> VideoInfo:
         duration=float(duration),
         thumbnail_url=info.get("thumbnail") or "",
     )
+
+def fetch_thumbnail(url: str, timeout: float = 5.0) -> bytes:
+    """
+    Télécharge l'image de miniature d'une vidéo.
+
+    :param url: Adresse de la miniature, telle que fournie par
+        :func:`fetch_video_info`.
+    :param timeout: Délai maximal d'attente, en secondes.
+    :return: Les octets de l'image, à ouvrir avec Pillow.
+    :raises urllib.error.URLError: Adresse injoignable ou délai dépassé.
+    """
+    request = urllib.request.Request(
+        url, headers={"User-Agent": "Convertisor-App"}
+    )
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        return response.read()

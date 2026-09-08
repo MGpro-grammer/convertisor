@@ -7,7 +7,7 @@ from tkinter import messagebox
 
 import customtkinter as ctk
 
-from core.config import DOWNLOADS_MP3, DOWNLOADS_MP4
+from core.config import DOWNLOADS_GIF, DOWNLOADS_MP3, DOWNLOADS_MP4
 from core.constants import (
     BUTTON_HEIGHT_MD, BUTTON_WIDTH_MD,
     FONT_BODY_SIZE, FONT_SMALL_SIZE, FILE_ROW_HEIGHT, PAD_SECTION, PAD_ITEM
@@ -26,11 +26,12 @@ class TabFiles(ctk.CTkFrame):
     FILE_ICONS = {
         ".mp3": "🎵",
         ".mp4": "🎬",
+        ".gif": "🎞",
     }
 
     #: Dossiers parcourus. Les doublons sont éliminés au parcours,
     #: plusieurs formats pouvant partager un même dossier de sortie.
-    SEARCH_DIRS = (DOWNLOADS_MP3, DOWNLOADS_MP4)
+    SEARCH_DIRS = (DOWNLOADS_MP3, DOWNLOADS_MP4, DOWNLOADS_GIF)
 
     def __init__(self, parent, settings: dict):
         """

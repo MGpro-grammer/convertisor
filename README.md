@@ -5,7 +5,7 @@
 ![Platform](https://img.shields.io/badge/Plateforme-Windows-lightgrey)
 
 Application de bureau Windows qui télécharge une vidéo YouTube à partir de
-son URL et l'enregistre en **MP3** ou en **MP4**.
+son URL et l'enregistre en **MP3**, en **MP4**, ou en **GIF animé**.
 
 ---
 
@@ -13,12 +13,11 @@ son URL et l'enregistre en **MP3** ou en **MP4**.
 
 - Téléchargement de l'audio d'une vidéo YouTube au format MP3 (192 kbit/s)
 - Téléchargement d'une vidéo YouTube au format MP4, à la meilleure qualité disponible
+- Conversion d'un extrait de vidéo en GIF animé, avec choix de la plage, du nombre d'images par seconde et de la largeur
 - Choix du dossier de destination
 - Gestion des fichiers téléchargés : liste et suppression
 - Thème clair, sombre ou automatique, conservé d'une session à l'autre
 - Mise à jour automatique depuis les releases du dépôt
-
-À venir : export d'une plage de la vidéo en GIF animé.
 
 ---
 
@@ -37,6 +36,18 @@ nécessaire aux téléchargements sont inclus.
 
 L'application vérifie au démarrage si une version plus récente est publiée,
 et propose de l'installer le cas échéant.
+
+---
+
+## Créer un GIF
+
+Collez l'URL puis cliquez sur **Analyser la vidéo** : le titre, la durée et
+la miniature s'affichent. Indiquez ensuite les bornes de l'extrait au format
+`mm:ss`, relevées sur YouTube, et ajustez si besoin le nombre d'images par
+seconde et la largeur. Le poids estimé se met à jour à chaque modification.
+
+Un extrait est limité à 30 secondes : au-delà, le fichier devient trop lourd
+pour l'usage auquel un GIF est destiné.
 
 ---
 
@@ -108,16 +119,16 @@ convertisor/
 │   ├── updater.py           # Vérification et installation des mises à jour
 │   ├── youtube.py           # Métadonnées d'une vidéo, sans téléchargement
 │   └── ytdlp.py             # Options communes à tous les téléchargements
-├── gif/                     # Découpage et conversion en GIF (en développement)
+├── gif/                     # Découpage et conversion en GIF
 ├── mp3/                     # Téléchargement au format MP3
 ├── mp4/                     # Téléchargement au format MP4
 ├── ui/                      # Interface graphique (CustomTkinter)
 │   ├── app.py               # Fenêtre principale et assemblage des onglets
 │   ├── base_download_tab.py # Socle commun aux onglets de téléchargement
-│   ├── player_frame.py      # Sélection d'une plage de la vidéo (en développement)
+│   ├── player_frame.py      # Sélection d'une plage de la vidéo
 │   ├── tab_convert.py       # Onglet MP3
 │   ├── tab_video.py         # Onglet MP4
-│   ├── tab_gif.py           # Onglet GIF (en développement)
+│   ├── tab_gif.py           # Onglet GIF
 │   ├── tab_files.py         # Onglet Fichiers
 │   └── tab_settings.py      # Onglet Paramètres
 ├── vendor/                  # Binaires embarqués, non versionnés (voir Construction)

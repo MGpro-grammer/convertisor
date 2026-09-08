@@ -8,10 +8,10 @@ composants.
 
 #—— Fenêtre ———————————————————————————————————————————————————————————————————————
 WINDOW_TITLE = "Convertisor"
-WINDOW_WIDTH = 600
-WINDOW_HEIGHT = 500
-WINDOW_MIN_WIDTH = 520
-WINDOW_MIN_HEIGHT = 460
+WINDOW_WIDTH = 620
+WINDOW_HEIGHT = 720
+WINDOW_MIN_WIDTH = 560
+WINDOW_MIN_HEIGHT = 620
 
 #—— Thème —————————————————————————————————————————————————————————————————————————
 DEFAULT_APPEARANCE = "Dark" # "Dark" | "Light" | "System"
@@ -27,6 +27,8 @@ BUTTON_WIDTH_MD = 110 # Bouton toolbar
 BUTTON_WIDTH_UPDATE = 220 # Bouton mise à jour
 PROGRESS_HEIGHT = 8
 FILE_ROW_HEIGHT = 36
+THUMBNAIL_WIDTH = 160 # Miniature de la vidéo, onglet GIF
+THUMBNAIL_HEIGHT = 90 # 160x90 : proportions 16/9
 
 #—— Polices ————————————————————————————————————————————————————————————————————————
 FONT_TITLE_SIZE = 18

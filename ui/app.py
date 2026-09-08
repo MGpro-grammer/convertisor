@@ -24,6 +24,7 @@ from core.settings import load_settings
 from core.updater import check_for_update, download_and_install, get_current_version
 from .tab_convert import TabConvert
 from .tab_files import TabFiles
+from .tab_gif import TabGif
 from .tab_settings import TabSettings
 from .tab_video import TabVideo
 
@@ -87,10 +88,14 @@ class App(ctk.CTk):
         )
         self.tabs.add("🎵  Convertir MP3")
         self.tabs.add("📽️  Convertir MP4")
+        self.tabs.add("🎞  Créer un GIF")
         self.tabs.add("🗑  Fichiers")
         self.tabs.add("⚙  Paramètres")
 
-        for tab_name in ["🎵  Convertir MP3", "📽️  Convertir MP4", "🗑  Fichiers", "⚙  Paramètres"]:
+        for tab_name in [
+            "🎵  Convertir MP3", "📽️  Convertir MP4", "🎞  Créer un GIF",
+            "🗑  Fichiers", "⚙  Paramètres",
+        ]:
             self.tabs.tab(tab_name).grid_columnconfigure(0, weight=1)
             self.tabs.tab(tab_name).grid_rowconfigure(0, weight=1)
 
@@ -111,6 +116,13 @@ class App(ctk.CTk):
         )
         self.tab_video.grid(row=0, column=0, sticky="nsew")
         self.tab_video.on_download_success = self._on_download_success
+
+        self.tab_gif = TabGif(
+            self.tabs.tab("🎞  Créer un GIF"),
+            self.status_var
+        )
+        self.tab_gif.grid(row=0, column=0, sticky="nsew")
+        self.tab_gif.on_download_success = self._on_download_success
 
         self.tab_files = TabFiles(
             self.tabs.tab("🗑  Fichiers"),
