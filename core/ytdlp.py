@@ -22,6 +22,34 @@ from functools import lru_cache
 from core.config import BASE_DIR, IS_FROZEN, RESOURCE_DIR
 from core.ffmpeg import get_ffmpeg_path
 
+class _SilentLogger:
+    """
+    Journal muet fourni à yt-dlp.
+
+    yt-dlp écrit ses messages sur ``sys.stdout`` et ``sys.stderr``.
+    L'application étant compilée sans console, ces deux flux valent
+    ``None`` et toute écriture y échouerait. Un journal qui absorbe les
+    messages supprime ce risque, et évite au passage que les erreurs
+    polluent la console en développement : elles remontent déjà sous
+    forme d'exception, qui reste levée normalement.
+    """
+
+    def debug(self, message: str) -> None:
+        """Ignore un message de débogage."""
+
+    def info(self, message: str) -> None:
+        """Ignore un message d'information."""
+
+    def warning(self, message: str) -> None:
+        """Ignore un avertissement."""
+
+    def error(self, message: str) -> None:
+        """Ignore une erreur ; yt-dlp lève l'exception correspondante."""
+
+
+#: Instance unique : ce journal n'a aucun état.
+_SILENT_LOGGER = _SilentLogger()
+
 #—— Moteur JavaScript embarqué ————————————————————————————————————————————————————
 DENO_FILENAME = "deno.exe"
 
@@ -69,6 +97,10 @@ def base_options() -> dict:
         "noplaylist": True,
         "quiet": True,
         "no_warnings": True,
+        # Sans journal dédié, yt-dlp écrit directement sur stdout et
+        # stderr, absents en mode compilé sans console.
+        "logger": _SILENT_LOGGER,
+        "no_color": True,
         "ffmpeg_location": get_ffmpeg_path(),
         # Autorise le téléchargement du solveur de défis JavaScript
         # depuis le dépôt officiel yt-dlp/ejs. Sans cette option,

@@ -16,3 +16,4 @@ installer/
 convert_icon.py
 settings.json
 vendor/
+liens-*.txt

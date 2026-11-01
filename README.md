@@ -12,6 +12,7 @@ son URL et l'enregistre en **MP3**, en **MP4**, ou en **GIF animé**.
 ## Fonctionnalités
 
 - Téléchargement de l'audio d'une vidéo YouTube au format MP3 (192 kbit/s)
+- Téléchargement par liste : un fichier texte contenant plusieurs liens YouTube, traités les uns après les autres
 - Téléchargement d'une vidéo YouTube au format MP4, à la meilleure qualité disponible
 - Conversion d'un extrait de vidéo en GIF animé, avec choix de la plage, du nombre d'images par seconde et de la largeur
 - Choix du dossier de destination
@@ -121,6 +122,9 @@ convertisor/
 │   └── ytdlp.py             # Options communes à tous les téléchargements
 ├── gif/                     # Découpage et conversion en GIF
 ├── mp3/                     # Téléchargement au format MP3
+│   ├── batch.py             # Téléchargement d'une série de liens
+│   ├── downloader.py        # Téléchargement d'un lien
+│   └── linkfile.py          # Lecture d'un fichier de liens
 ├── mp4/                     # Téléchargement au format MP4
 ├── ui/                      # Interface graphique (CustomTkinter)
 │   ├── app.py               # Fenêtre principale et assemblage des onglets

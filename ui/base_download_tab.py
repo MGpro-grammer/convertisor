@@ -100,13 +100,16 @@ class BaseDownloadTab(ctk.CTkFrame):
         row += 1
 
         self.url_var = ctk.StringVar()
-        ctk.CTkEntry(
+        self.url_entry = ctk.CTkEntry(
             self,
             textvariable=self.url_var,
             placeholder_text="https://www.youtube.com/watch?v=...",
             height=ENTRY_HEIGHT,
             font=ctk.CTkFont(size=FONT_BODY_SIZE)
-        ).grid(row=row, column=0, pady=(PAD_ITEM, PAD_SECTION * 2), sticky="ew")
+        )
+        self.url_entry.grid(
+            row=row, column=0, pady=(PAD_ITEM, PAD_SECTION * 2), sticky="ew"
+        )
         row += 1
 
         # Dossier
@@ -231,13 +234,37 @@ class BaseDownloadTab(ctk.CTkFrame):
         if not url:
             messagebox.showwarning("Attention", "Colle une URL YouTube.")
             return
-        self.btn.configure(state="disabled")
+        self.status_var.set("Téléchargement en cours...")
+        self._begin(self._download_task, url)
+
+    def _prepare_progress(self):
+        """
+        Met la barre de progression en route avant le téléchargement.
+
+        La version de base anime une barre continue, faute de savoir où
+        en est yt-dlp. Une sous-classe capable de chiffrer l'avancement
+        — un lot de plusieurs liens, par exemple — la remplace par une
+        barre déterminée qu'elle pilote elle-même.
+        """
         self.progress.configure(mode="indeterminate")
         self.progress.start()
-        self.status_var.set("Téléchargement en cours...")
-        threading.Thread(
-            target=self._download_task, args=(url,), daemon=True
-        ).start()
+
+    def _begin(self, worker, *args):
+        """
+        Verrouille l'interface et lance le travail en arrière-plan.
+
+        Rassemble ce qui doit accompagner tout travail long, quel qu'il
+        soit : bouton désactivé, barre de progression lancée, thread
+        démarré. Une sous-classe qui a son propre travail à mener —
+        sans URL unique à traiter — passe par cette méthode plutôt que
+        de redéfinir :meth:`_start_download` au complet.
+
+        :param worker: Fonction exécutée dans le thread de travail.
+        :param args: Arguments transmis à cette fonction.
+        """
+        self.btn.configure(state="disabled")
+        self._prepare_progress()
+        threading.Thread(target=worker, args=args, daemon=True).start()
 
     def _download_task(self, url: str):
         """Exécute :meth:`download` dans le thread de travail."""
